@@ -1,0 +1,32 @@
+{
+  "event": {
+    "otherFields": {
+      "otherFieldsVersion": "3.0",
+      "jsonObjects": [
+        {
+          "objectName": "CustomNotification",
+          "objectInstances": [
+            {
+              "objectInstance": {
+                "cm3gppNotifyFields": {
+                  "dN": "#dN",
+                  "notificationType": "notifyMOIAttributeValueChange",
+                  "notificationId": "notificationID123121312323",
+                  "sourceIndicator": "sONOperation",
+                  "eventTime": "#Timestamp",
+                  "systemDN": "NRNB=5",
+                  "attributeList": "#attributeList",
+                  "correlatedNotifications": {
+                    "notificationID-notifyMOIAttributeValueChange": "sONOperation"
+                  },
+                  "additionalText": "sometext",
+                  "cm3gppNotifyFieldsVersion": "1.0"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
