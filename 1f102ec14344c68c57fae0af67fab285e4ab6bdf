@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d03c1027_a809aede",
+        "filename": "integration/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-03-10T07:51:41Z",
+      "side": 1,
+      "message": "ves-client",
+      "range": {
+        "startLine": 29,
+        "startChar": 20,
+        "endLine": 29,
+        "endChar": 29
+      },
+      "revId": "1f102ec14344c68c57fae0af67fab285e4ab6bdf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5cd6ca6_2df6689c",
+        "filename": "integration/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-03-10T07:51:41Z",
+      "side": 1,
+      "message": "ves-client",
+      "range": {
+        "startLine": 36,
+        "startChar": 10,
+        "endLine": 36,
+        "endChar": 19
+      },
+      "revId": "1f102ec14344c68c57fae0af67fab285e4ab6bdf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
