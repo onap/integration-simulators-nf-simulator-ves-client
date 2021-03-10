@@ -24,14 +24,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.onap.integration.nfsimulator</groupId>
-        <artifactId>vesclient</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
-    </parent>
-
-    <artifactId>pnf-simulator-integration</artifactId>
+    <groupId>org.onap.integration.simulators.nf-simulator.ves-client</groupId>
+    <artifactId>vesclient-integration</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>vesclient-integration</name>
 
@@ -47,6 +41,13 @@
         <maven.compiler.target>11</maven.compiler.target>
         <rest-assured.version>3.2.0</rest-assured.version>
         <mongo-java-driver.version>3.9.1</mongo-java-driver.version>
+        <spring-boot-starter.version>2.1.6.RELEASE</spring-boot-starter.version>
+        <spring-boot-starter-web.version>2.1.6.RELEASE</spring-boot-starter-web.version>
+        <spring-test.version>5.0.4.RELEASE</spring-test.version>
+        <spring-boot-starter-test.version>2.1.6.RELEASE</spring-boot-starter-test.version>
+        <gson.version>2.8.2</gson.version>
+        <docker-compose-rule-junit4.version>0.34.0</docker-compose-rule-junit4.version>
+        <assertj-core.version>3.19.0</assertj-core.version>
     </properties>
 
     <dependencies>
@@ -54,16 +55,19 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <version>${assertj-core.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <version>${spring-boot-starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring-boot-starter-web.version}</version>
         </dependency>
 
         <dependency>
@@ -80,20 +84,24 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <version>${spring-test.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot-starter-test.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.palantir.docker.compose</groupId>
             <artifactId>docker-compose-rule-junit4</artifactId>
+            <version>${docker-compose-rule-junit4.version}</version>
         </dependency>
     </dependencies>
 
