@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1828fda8_9d19a00b",
+        "filename": "Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-03-10T07:25:05Z",
+      "side": 1,
+      "message": "Ves client",
+      "range": {
+        "startLine": 6,
+        "startChar": 20,
+        "endLine": 6,
+        "endChar": 33
+      },
+      "revId": "8ae7bfff08788d18a130455b5211c1ea8c4c5139",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7cabe25c_b85232bc",
+        "filename": "Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-03-10T07:25:05Z",
+      "side": 1,
+      "message": "Ves client",
+      "range": {
+        "startLine": 11,
+        "startChar": 18,
+        "endLine": 11,
+        "endChar": 32
+      },
+      "revId": "8ae7bfff08788d18a130455b5211c1ea8c4c5139",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "560d2294_f2e0eb66",
+        "filename": "docker-compose.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-03-10T07:25:05Z",
+      "side": 1,
+      "message": "please surround with \"\"",
+      "range": {
+        "startLine": 21,
+        "startChar": 6,
+        "endLine": 21,
+        "endChar": 15
+      },
+      "revId": "8ae7bfff08788d18a130455b5211c1ea8c4c5139",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf15daad_156f4439",
+        "filename": "integration/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-03-10T07:25:05Z",
+      "side": 1,
+      "message": "should be \n    \u003cgroupId\u003eorg.onap.integration.nfsimulator\u003c/groupId\u003e\n    \u003cartifactId\u003evesclient\u003c/artifactId\u003e\n    \u003cversion\u003e1.0.0-SNAPSHOT\u003c/version\u003e",
+      "range": {
+        "startLine": 28,
+        "startChar": 8,
+        "endLine": 30,
+        "endChar": 41
+      },
+      "revId": "8ae7bfff08788d18a130455b5211c1ea8c4c5139",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "daa14c99_33103d1e",
+        "filename": "integration/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-03-10T07:25:05Z",
+      "side": 1,
+      "message": "please change to vesclient-integration and version to 1.0.0-SNAPSHOT",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 42
+      },
+      "revId": "8ae7bfff08788d18a130455b5211c1ea8c4c5139",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b21f6856_336af13e",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-03-10T07:25:05Z",
+      "side": 1,
+      "message": "please change version to 3.2.0",
+      "range": {
+        "startLine": 30,
+        "startChar": 8,
+        "endLine": 30,
+        "endChar": 32
+      },
+      "revId": "8ae7bfff08788d18a130455b5211c1ea8c4c5139",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef8e316e_5a98cf0d",
+        "filename": "pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5098
+      },
+      "writtenOn": "2021-03-10T07:25:05Z",
+      "side": 1,
+      "message": "I thing that using ves-client as a name may be more readable",
+      "range": {
+        "startLine": 34,
+        "startChar": 16,
+        "endLine": 34,
+        "endChar": 25
+      },
+      "revId": "8ae7bfff08788d18a130455b5211c1ea8c4c5139",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": true
+    }
+  ]
+}
