@@ -1,0 +1,8 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+1: Bartosz Gardziejewski <bartosz.gardziejewski@nokia.com>
+Code-Review+2: Krzysztof Kuzmicki <krzysztof.kuzmicki@nokia.com>
+Submitted-by: Krzysztof Kuzmicki <krzysztof.kuzmicki@nokia.com>
+Submitted-at: Mon, 15 Mar 2021 13:51:49 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/integration/simulators/nf-simulator/ves-client/+/119310
+Project: integration/simulators/nf-simulator/ves-client
+Branch: refs/heads/master
