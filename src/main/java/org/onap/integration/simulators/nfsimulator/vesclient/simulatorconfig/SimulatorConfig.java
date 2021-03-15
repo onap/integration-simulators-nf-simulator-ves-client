@@ -21,6 +21,7 @@
 package org.onap.integration.simulators.nfsimulator.vesclient.simulatorconfig;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,6 +38,7 @@ import java.net.URL;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@ApiModel(value = "ClientConfiguration", description = "Provides url to VES endpoint")
 public class SimulatorConfig {
 
     @JsonIgnore

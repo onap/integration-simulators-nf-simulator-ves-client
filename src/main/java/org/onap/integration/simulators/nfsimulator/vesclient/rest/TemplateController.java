@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * Simulator
  * ================================================================================
- * Copyright (C) 2019 Nokia. All rights reserved.
+ * Copyright (C) 2021 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,10 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import com.google.gson.Gson;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.onap.integration.simulators.nfsimulator.vesclient.db.Storage;
 import org.onap.integration.simulators.nfsimulator.vesclient.rest.model.TemplateRequest;
 import org.onap.integration.simulators.nfsimulator.vesclient.template.Template;
@@ -48,6 +52,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/template")
+@Api(tags = "Template controller", value = "Template controller")
 public class TemplateController {
     static final String TEMPLATE_NOT_FOUND_MSG = "A template with given name does not exist";
     static final String CANNOT_OVERRIDE_TEMPLATE_MSG = "Cannot overwrite existing template. Use override=true to override";
@@ -59,11 +64,19 @@ public class TemplateController {
     }
 
     @GetMapping("list")
+    @ApiOperation(value = "Fetch all templates supported by Ves client")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "It returns list of supported templates.")
+    })
     public ResponseEntity<List<Template>> list() {
         return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("get/{templateName}")
+    @ApiOperation(value = "Fetch details about selected template")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "It returns an information about selected template.")
+    })
     public ResponseEntity<String> get(@PathVariable String templateName) {
         Optional<Template> template = service.get(templateName);
         return template
@@ -84,6 +97,10 @@ public class TemplateController {
     }
 
     @PostMapping("upload")
+    @ApiOperation(value = "Upload a new template")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Template uploaded")
+    })
     public ResponseEntity<String> upload(
             @RequestBody @Valid TemplateRequest templateRequest,
             @RequestParam(required = false) boolean override) {
@@ -98,6 +115,10 @@ public class TemplateController {
     }
 
     @PostMapping("search")
+    @ApiOperation(value = "Fetch templates which fit to query")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Returns list of templates fitted to query.")
+    })
     public ResponseEntity<List<String>> searchByCriteria(@RequestBody SearchExp queryJson) {
         try {
             List<String> templateNames = service.getIdsByContentCriteria(queryJson.getSearchExpr());

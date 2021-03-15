@@ -2,6 +2,11 @@ all: start
 
 .PHONY: start
 
+build:
+	@echo "##### Build Ves client #####"
+	mvn clean package -Pdocker
+	@echo "##### DONE #####"
+
 start:
 	@echo "##### Start Ves client #####"
 	docker-compose up -d

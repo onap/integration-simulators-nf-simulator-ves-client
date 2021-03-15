@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * PNF-REGISTRATION-HANDLER
  * ================================================================================
- * Copyright (C) 2018 Nokia. All rights reserved.
+ * Copyright (C) 2021 Nokia. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,11 @@ package org.onap.integration.simulators.nfsimulator.vesclient.rest;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonSyntaxException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.json.JSONException;
 import org.onap.integration.simulators.nfsimulator.vesclient.event.EventData;
 import org.onap.integration.simulators.nfsimulator.vesclient.event.EventDataService;
@@ -70,6 +75,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/simulator")
+@Api(tags = "Ves client", value = "Simulate Ves client")
 public class SimulatorController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimulatorController.class);
@@ -101,8 +107,18 @@ public class SimulatorController {
     }
 
     @PostMapping(value = "start")
+    @ApiOperation(value = "Start a job which will send a multiple events to VES")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Job scheduled successfully. It returns: {'message':'<txt>', 'jobName':'<job_name>'}"),
+            @ApiResponse(code = 400, message = "Bad request: invalid json in payload"),
+            @ApiResponse(code = 500, message = "Internal server error: unexpected error") })
     public ResponseEntity<Map<String, Object>> start(@RequestHeader HttpHeaders headers,
-                                                     @Valid @RequestBody SimulatorRequest triggerEventRequest) {
+                                                     @Valid
+                                                     @RequestBody
+                                                     @ApiParam(
+                                                             name =  "jobConfiguration",
+                                                             value = "Information what to send as event and when",
+                                                             required = true) SimulatorRequest triggerEventRequest) {
         logContextHeaders(headers, "/simulator/start");
         LOGGER.info(ENTRY, "Simulator started");
 
@@ -152,18 +168,42 @@ public class SimulatorController {
     }
 
     @GetMapping("config")
+    @ApiOperation(value = "Get simulator configuration")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code=200, message = "Ves client configuration fetched. It returns: {'simulatorConfig': {'vesServerUrl': '<urlToVesService>'} }"),
+            }
+    )
     public ResponseEntity<Map<String, Object>> getConfig() {
         SimulatorConfig configToGet = simulatorService.getConfiguration();
         return buildResponse(OK, ImmutableMap.of("simulatorConfig", configToGet));
     }
 
     @PutMapping("config")
-    public ResponseEntity<Map<String, Object>> updateConfig(@Valid @RequestBody SimulatorConfig newConfig) {
+    @ApiOperation(value = "Update simulator configuration")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code=200, message = "Ves client configuration updated. It returns: {'simulatorConfig': {'vesServerUrl': '<urlToVesService>'} }"),
+            }
+    )
+    public ResponseEntity<Map<String, Object>> updateConfig(
+            @Valid @RequestBody
+            @ApiParam(
+                name =  "clientConfiguration",
+                value = "Client configuration",
+                required = true) SimulatorConfig newConfig) {
         SimulatorConfig updatedConfig = simulatorService.updateConfiguration(newConfig);
         return buildResponse(OK, ImmutableMap.of("simulatorConfig", updatedConfig));
     }
 
     @PostMapping("cancel/{jobName}")
+    @ApiOperation(value = "Cancel a single job which sends events to VES")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code=200, message = "Job cancelled successfully"),
+                    @ApiResponse(code=404, message = "Unable to find job to cancel"),
+            }
+    )
     public ResponseEntity<Map<String, Object>> cancelEvent(@PathVariable String jobName) throws SchedulerException {
         String jobNameNoBreakingCharacters = replaceBreakingCharacters(jobName);
         LOGGER.info(ENTRY, "Cancel called on {}.", jobNameNoBreakingCharacters);
@@ -172,6 +212,13 @@ public class SimulatorController {
     }
 
     @PostMapping("cancel")
+    @ApiOperation(value = "Cancel all jobs which send events to VES")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code=200, message = "Jobs cancelled successfully"),
+                    @ApiResponse(code=404, message = "Unable to find job to cancel"),
+            }
+    )
     public ResponseEntity<Map<String, Object>> cancelAllEvent() throws SchedulerException {
         LOGGER.info(ENTRY, "Cancel called on all jobs");
         boolean isCancelled = simulatorService.cancelAllEvents();
@@ -179,7 +226,19 @@ public class SimulatorController {
     }
 
     @PostMapping("event")
-    public ResponseEntity<Map<String, Object>> sendEventDirectly(@RequestHeader HttpHeaders headers, @Valid @RequestBody FullEvent event)
+    @ApiOperation(value = "Send single event to VES")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code=200, message = "Event sent successfully")
+            }
+    )
+    public ResponseEntity<Map<String, Object>> sendEventDirectly(
+            @RequestHeader HttpHeaders headers,
+            @Valid @RequestBody
+            @ApiParam(
+                name =  "event",
+                value = "Event to send",
+                required = true) FullEvent event)
         throws IOException, GeneralSecurityException {
         logContextHeaders(headers, "/simulator/event");
         LOGGER.info(ENTRY, "Trying to send one-time event directly to VES Collector");
