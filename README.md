@@ -358,7 +358,7 @@ Expected output of such request (body of an event being send to a ves) should be
 ```
 
 ### Logging
-Every start of simulator will generate new logs that can be found in docker pnf-simualtor container under path: 
+Every start of simulator will generate new logs that can be found in docker ves-client container under path: 
 /var/log/ONAP/pnfsimulator/pnfsimulator_output.log
 
 ### Swagger
@@ -388,7 +388,7 @@ Once certificate are not used for authorization, user can set up VES url using u
 
 ### Integration tests
 Integration tests are located in folder 'integration'. Tests are using docker-compose from root folder. 
-This docker-compose has pnfsimulator image set on nexus3.onap.org:10003/onap/pnf-simulator:1.0.1-SNAPSHOT. 
+This docker-compose has ves-client image set on onap/org.onap.integration.nfsimulator.vesclient:1.0.0-SNAPSHOT. 
 To test your local changes before running integration tests please build project using:
 
     'mvn clean install -P docerk'
@@ -402,7 +402,7 @@ Simulator can cooperate with VES server in different security types in particula
 
 Warning: according to VES implementation which uses certificate with Common Name set to DCAELOCAL we decided not to use strict hostname verification, so at least this parameter is skipped during checking of the client certificate.
 
-#### How to generate client correct keystore for pnf-simulator
+#### How to generate client correct keystore for ves-client
  The Root CA cert is available in certs folder in VES repository. The password for rootCA.key is collector.
  
  The procedure of generating client's certificate:
@@ -410,9 +410,9 @@ Warning: according to VES implementation which uses certificate with Common Name
  2. Use the client’s private key to generate a cert request: ```openssl req -new -key client.key -out client.csr```
  3. Issue the client certificate using the cert request and the CA cert/key: ```openssl x509 -req -in client.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out client.crt -days 500 -sha256```
  4. Convert the client certificate and private key to pkcs#12 format: ```openssl pkcs12 -export -inkey client.key -in client.crt -out client.p12```
- 5. Copy pkcs file into pnf simulators folder: ```/app/store/```
+ 5. Copy pkcs file into ves client folder: ```/app/store/```
  
-#### How to generate correct truststore for pnf-simulator
+#### How to generate correct truststore for ves-client
  Create truststore with rootCA.crt: 
  1. ```keytool -import -file rootCA.crt -alias firstCA -keystore trustStore```
  2. Copy truststore to ```/app/store/```
@@ -424,7 +424,7 @@ Warning: according to VES implementation which uses certificate with Common Name
 Depending on your needs, you are able to change client certificate, replace trustStore to accept new server certificate change keystore and truststore passwords or completely disable client cert authentication.
 
 For this purpose:
-1. Go to the pnf simulator container into the /app folder.
+1. Go to the ves-client container into the /app folder.
 2. If you want to replace keystore or truststore put them into the /app/store folder.
 3. Edit /app/application.properties file as follow:
 - ssl.clientCertificateEnabled=true (to disable/enable client authentication)
