@@ -1,0 +1,7 @@
+Verified+1: ONAP Jobbuilder <onap-jobbuilder@jenkins.onap.org>
+Code-Review+2: Bogumil Zebek <bogumil.zebek@nokia.com>
+Submitted-by: Bogumil Zebek <bogumil.zebek@nokia.com>
+Submitted-at: Mon, 12 Apr 2021 10:49:27 +0000
+Reviewed-on: https://gerrit.onap.org/r/c/integration/simulators/nf-simulator/ves-client/+/120402
+Project: integration/simulators/nf-simulator/ves-client
+Branch: refs/heads/master
