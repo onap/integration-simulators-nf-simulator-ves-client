@@ -18,6 +18,7 @@
 
 from pymongo import MongoClient
 import argparse
+import os
 
 parser = argparse.ArgumentParser(description='Script creates configuration in pnf simulator mongodb if it doesn\'t exists.')
 args = parser.parse_args()
@@ -37,7 +38,7 @@ def init_mongo_db(client, col_list):
 
 
 if __name__ == "__main__":
-    client = MongoClient(host='mongo',
+    client = MongoClient(host=os.getenv('MONGO_HOSTNAME', 'mongo'),
                      port=27017,
                      username='root',
                      password=MONGO_DB_PASSWORD,
