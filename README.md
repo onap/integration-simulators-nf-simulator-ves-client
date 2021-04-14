@@ -1,17 +1,18 @@
 # VES Client Simulator
 Simulator that generates VES events related to PNF PNP integration.
 
-## Usage of simulator
+## Usage of ves-client
 ### Setting up
-Preferred way to start simulator is to use `docker-compose up -d` command.
-All required docker images will be downloaded from ONAP Nexus, however there is a possibility to build those 
-images locally. It can be achieved by invoking `mvn clean install -P docker` from top directory.
+Preferred way to start ves-client is to use `docker-compose up -d` command.
+This docker-compose has ves-client image set on `onap/org.onap.integration.nfsimulator.vesclient`.
+To test your local changes before running integration tests please build project using:
+`mvn clean install -P docker` from top directory.
  
 ### API
-Simulator provides REST endpoints which can be used to trigger sending events to VES.
+ves-client provides REST endpoints which can be used to trigger sending events to VES.
 
 *Periodic event sending*
-To trigger sending use following endpoint *http://<simulator_ip>:5000/simulator/start*.  
+To trigger sending use following endpoint *http://<client_ip>:5000/simulator/start*.  
 Supported method: *POST*  
 Headers:  
     - Content-Type - application/json  
@@ -85,12 +86,12 @@ Sample Request:
       }
     }
     
-### Changing simulator configuration
-Utility of default configuration has been introduced so as to facilitate sending requests. so far only vesServerUrl states default simulator configuration.
-On simulator startup, vesServerUrl is initialized with default value, but must be replaced with correct VES server url by user.
-Once vesServerUrl is properly set on simulator, this parameter does not need to be incorporated into every trigger event request.
+### Changing ves-client configuration
+Utility of default configuration has been introduced to facilitate sending requests. so far only vesServerUrl states default ves-client configuration.
+On ves-client startup, vesServerUrl is initialized with default value, but must be replaced with correct VES server url by user.
+Once vesServerUrl is properly set on a ves-client, this parameter does not need to be incorporated into every trigger event request.
 If user does not provide vesServerUrl in trigger request, default value will be used.
-If use does provide vesServerUrl in trigger request, then passed value will be used instead of default one (default value will not be overwritten by provided one).
+If user does provide vesServerUrl in trigger request, then passed value will be used instead of default one (default value will not be overwritten by provided one).
 
 It is possible to get and update configuration (current target vesServerUrl) using offered REST API - */simulator/config* endpoint is exposed for that.
 To get current configuration *GET* method must be used.
@@ -104,11 +105,11 @@ Note: passed vesServerUrl must be wellformed URL.
 
 ### Templates
 Template is a draft event. Merging event with patch will result in valid VES event. Template itself should be a correct VES event as well as valid json object. 
-In order to apply custom template, just copy it to ./templates directory.
+In order to apply a custom template, just copy it to ./templates directory.
 *notification.json* and *registration.json* are available by default in *./templates* directory.
 
 #### Template management
-The simulator provides means for managing templates. Supported actions: adding, editing (overriding) and deleting are available via HTTP endpoint */template*
+The ves-client provides means for managing templates. Supported actions: adding, editing (overriding) and deleting are available via HTTP endpoint */template*
 
 ```GET /template/list```  
 Lists all templates known to the simulator.
@@ -141,7 +142,7 @@ Sample payload:
 ```
 
 ### Searching for key-value conditions in stored templates
-Simulator allows to search through stored templates and retrieve names of those that satisfy given criteria passed in form of key-value pairs (See examples below).
+ves-client allows searching through stored templates and retrieve names of those that satisfy given criteria passed in form of key-value pairs (See examples below).
 Following data types are supported in search as values:
 -integer
 -string
@@ -153,8 +154,8 @@ Example search expression:
 
 {"domain": "notification", "sequence": 1, "startEpochMicrosec": 1531616794, "sampleDouble": 2.5}
 
-will find all templates that contain all of passed key-value entries. There is an AND condition beetwen given criteria - all of them must be satisfied to qualify template as matching item.
- Keys of search expressions are searched in case insensitive way as well as string values.
+will find all templates that contain all of passed key-value entries. There is an AND condition between given criteria - all of them must be satisfied to qualify the template as matching item.
+Keys of search expressions are searched in case-insensitive way as well as string values.
 Where it comes to values of numerical and boolean type exact match is expected.
 
 API usage:
@@ -182,22 +183,22 @@ Sample response:
 Note: Manually deployed templates, or actually existing ones, but modified inside the templates catalog '/app/templates', will be automatically synchronized with schemas stored inside the database.  That means that a user can dynamically change the template content using vi editor at simulator container, as well as use any editor at any machine and then push the changes to the template folder. All the changes will be processed 'on the fly' and accessible via the rest API.
 
 ### Periodic events
-Simulator has ability to send event periodically. Rest API support parameters:
+ves-client has ability to send events periodically. Rest API support parameters:
 * repeatCount - count of times that event will be sent to VES
 * repeatInterval - interval (in second) between two events.
 (Checkout example to see how to use them)
 
 ### Patching
-User is able to provide patch in request, which will be merged into template.  
+User is able to provide a patch in request, which will be merged into template.  
 
 Warning: Patch should be a valid json object (no json primitives nor json arrays are allowed as a full body of patch).
 
-This mechanism allows to override part of template. 
-If in "patch" section there are additional parameters (absent in template), those parameters with values will be added to event.
+This mechanism allows overriding parts of template. 
+If in "patch" section there are additional parameters (absent in the template), those parameters with values will be added to event.
 Patching mechanism supports also keywords that enables automatic value generation of appropriate type
 
 ### Keyword support
-Simulator supports corresponding keywords:
+ves-client supports corresponding keywords:
 - \#RandomInteger(start,end) - substitutes keyword with random positive integer within given range (range borders inclusive)
 - \#RandomPrimitiveInteger(start,end) - the same as #RandomInteger(start,end), but returns long as result
 - \#RandomInteger -  substitutes keyword with random positive integer
@@ -208,13 +209,13 @@ Simulator supports corresponding keywords:
 - \#Increment - substitutes keyword with positive integer starting from 1 - for each consecutive event, value of increment property is incremented by 1
 
 Additional hints and restrictions:
-All keywords without 'Primitive' in name return string as result. To specify keyword with 2 arguments e.g. #RandomInteger(start,end) no whitespaces between arguments are allowed.
-Maximal value of arguments for RandomInteger is limited to the java integer range. Minimal is always 0. (Negative values are prohibited and wont be treated as a correct parts of keyword).
+All keywords without 'Primitive' in name return string as result. To specify a keyword with 2 arguments e.g. #RandomInteger(start,end) no whitespaces between arguments are allowed.
+Maximal value of arguments for RandomInteger is limited to the java integer range. Minimal is always 0. (Negative values are prohibited and won't be treated as a correct parts of keyword).
 RandomInteger with parameters will automatically find minimal and maximal value form the given attributes so no particular order of those is expected.    
 
 How does it work?
-When user does't want to fill in parameter values that are not relevant from user perspective but are mandatory by end system, then keyword feature should be used.
-In template, keyword strings are substituted in runtime with appropriate values autogenerated by simulator. 
+When user doesn't want to fill in parameter values that are not relevant from user perspective but are mandatory by end system, then keyword feature should be used.
+In a template, keyword strings are substituted in runtime with appropriate values autogenerated by the ves-client. 
 Example can be shown below:
 
 Example template with keywords:
@@ -260,7 +261,7 @@ Corresponding result of keyword substitution (event that will be sent):
     }
  
 ### In place variables support
-Simulator supports dynamic keywords e.g. #dN to automatically substitute selected phrases in defined json schema.
+ves-client supports dynamic keywords e.g. #dN to automatically substitute selected phrases in defined json schema.
 Keywords have to be specified as separate json values, so no mixing keywords inside textual fields are acceptable. Current implementation 
 supports placing variables in json templates as well as in patches latter sent as part of the requests.
 
@@ -286,7 +287,7 @@ Request:
 }
 ``` 
 
-cmNotification.json template is installed automatically after startup of the simulator but can be found also in repository in 'templates' folder:
+cmNotification.json template is installed automatically after a startup of the simulator but can be found also in repository in 'templates' folder:
 ```json
 {
   "event": {
@@ -322,7 +323,7 @@ cmNotification.json template is installed automatically after startup of the sim
 }
 ```
 
-Expected output of such request (body of an event being send to a ves) should be as follows:
+Expected output of such request (body of an event being sent to a ves) should be as follows:
 ```json
 {
 	"event": {
@@ -358,7 +359,7 @@ Expected output of such request (body of an event being send to a ves) should be
 ```
 
 ### Logging
-Every start of simulator will generate new logs that can be found in docker ves-client container under path: 
+Every start of ves-client will generate new logs that can be found in a docker ves-client container under path: 
 /var/log/ONAP/pnfsimulator/pnfsimulator_output.log
 
 ### Swagger
@@ -370,13 +371,12 @@ User is able to view events history.
 In order to browse history, go to *http://<simulator_ip>:8081/db/pnf_simulator/eventData*
 
 ### TLS Support
-Simulator is able to communicate with VES using HTTPS protocol.
-CA certificates are incorporated into simulator docker image, thus no additional actions are required from user.
+ves-client is able to communicate with VES using HTTPS protocol.
+CA certificates are incorporated into ves-client docker image, thus no additional actions are required from user.
 
 Certificates can be found in docker container under path: */usr/local/share/ca-certificates/*
 
-Simulator works with VES that uses both self-signed certificate (already present in keystore) and VES integrated to AAF.
-
+ves-client works with VES that uses both self-signed certificate (already present in keystore) and VES integrated to AAF.
 Certification loading can be disabled by setting environment variable ```USE_CERTIFICATE_FOR_AUTHORIZATION``` to false. 
 Once certificate are not used for authorization, user can set up VES url using username and password.
 
@@ -387,7 +387,7 @@ Once certificate are not used for authorization, user can set up VES url using u
 ## Developers Guide
 
 ### Integration tests
-Integration tests are located in folder 'integration'. Tests are using docker-compose from root folder. 
+Integration tests are located in 'integration' directory. Tests are using docker-compose from root folder. 
 This docker-compose has ves-client image set on onap/org.onap.integration.nfsimulator.vesclient:1.0.0-SNAPSHOT. 
 To test your local changes before running integration tests please build project using:
 
@@ -398,7 +398,7 @@ then go to 'integration' folder and run:
     'mvn test'
     
 ### Client certificate authentication
-Simulator can cooperate with VES server in different security types in particular ```auth.method=certBasicAuth``` which means that it needs to authenticate using client private certificate. 
+ves-client can cooperate with VES server in different security types in particular ```auth.method=certBasicAuth``` which means that it needs to authenticate using client private certificate. 
 
 Warning: according to VES implementation which uses certificate with Common Name set to DCAELOCAL we decided not to use strict hostname verification, so at least this parameter is skipped during checking of the client certificate.
 
