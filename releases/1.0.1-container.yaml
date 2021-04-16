@@ -1,0 +1,8 @@
+distribution_type: 'container'
+container_release_tag: '1.0.1'
+project: 'integration-simulators-nf-simulator-ves-client'
+log_dir: 'integration-simulators-nf-simulator-ves-client-maven-docker-stage-master/41/'
+ref: 6ca044d74faed1d5a9168c5619ad2c0249dda3ad
+containers:
+  - name: 'org.onap.integration.nfsimulator.vesclient'
+    version: '1.0.1-STAGE-20210416T082518Z'
