@@ -14,5 +14,6 @@ RUN python -m pip install -r /opt/db/config/requirements.txt
 ADD certificates  /usr/local/share/ca-certificates/
 RUN update-ca-certificates
 CMD python /opt/db/config/mongo_db_schema_creation.py \
-    && if [ -f /app/store/trust.pass ]; then cp /app/store/trust.pass /app/store/truststore.pass; fi \
+    && if [ -d /app/certs ]; then mkdir -p /app/store; cp /app/certs/keystore.p12 /app/store/cert.p12; cp /app/certs/p12.pass /app/store/p12.pass;  cp /app/certs/truststore.jks /app/store/trust.jks; cp /app/certs/p12.pass /app/store/truststore.pass; else cp /app/store/trust.pass /app/store/truststore.pass; fi \
     && java -Dspring.config.location=file:/app/application.properties  -cp /app/libs/*:/app/vesclient.jar org.onap.integration.simulators.nfsimulator.vesclient.Main \
+
