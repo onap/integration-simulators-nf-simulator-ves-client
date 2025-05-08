@@ -1,5 +1,4 @@
-FROM docker.io/openjdk:11-jre-slim
-COPY --from=python:3.6 / /
+FROM python:3.6-alpine
 
 ARG VERSION=${version}
 
@@ -8,8 +7,8 @@ ADD config /opt/db/config
 ADD ./templates /app/templates
 ADD ./src/main/resources/application.properties /app/application.properties
 ADD target/vesclient-${VERSION}.jar /app/vesclient.jar
-CMD apk update
-CMD apk add ca-certificates
+
+RUN apk --no-cache add openjdk11 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
 RUN python -m pip install -r /opt/db/config/requirements.txt
 ADD certificates  /usr/local/share/ca-certificates/
 RUN update-ca-certificates
@@ -17,4 +16,3 @@ CMD python /opt/db/config/mongo_db_schema_creation.py \
     && if [ -d /app/certs ]; then mkdir -p /app/store; cp /app/certs/keystore.p12 /app/store/cert.p12; cp /app/certs/p12.pass /app/store/p12.pass;  cp /app/certs/truststore.jks /app/store/trust.jks; cp /app/certs/p12.pass /app/store/truststore.pass; fi \
     && if [ -f /app/store/trust.pass ]; then cp /app/store/trust.pass /app/store/truststore.pass; fi \
     && java -Dspring.config.location=file:/app/application.properties  -cp /app/libs/*:/app/vesclient.jar org.onap.integration.simulators.nfsimulator.vesclient.Main \
-
