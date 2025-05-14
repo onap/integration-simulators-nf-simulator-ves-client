@@ -8,7 +8,7 @@ ADD ./templates /app/templates
 ADD ./src/main/resources/application.properties /app/application.properties
 ADD target/vesclient-${VERSION}.jar /app/vesclient.jar
 
-RUN apk --no-cache add openjdk11 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
+RUN apk --no-cache add openjdk11 --repository=http://dl-cdn.alpinelinux.org/alpine/main/community
 RUN python -m pip install -r /opt/db/config/requirements.txt
 ADD certificates  /usr/local/share/ca-certificates/
 RUN update-ca-certificates
