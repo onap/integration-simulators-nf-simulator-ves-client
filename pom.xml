@@ -32,7 +32,7 @@
 
     <groupId>org.onap.integration.simulators.nf-simulator.ves-client</groupId>
     <artifactId>vesclient</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
 
     <name>vesclient</name>
 
@@ -79,6 +79,8 @@
         <spring-boot-starter-actuator.version>2.1.0.RELEASE</spring-boot-starter-actuator.version>
         <spring-boot-starter-data-mongodb.version>2.1.0.RELEASE</spring-boot-starter-data-mongodb.version>
         <spring-cloud-config-client.version>2.1.4.RELEASE</spring-cloud-config-client.version>
+        <spring-cloud-sleuth.version>2.1.3.RELEASE</spring-cloud-sleuth.version>
+        <spring-cloud-sleuth-otel.version>1.0.0-M12</spring-cloud-sleuth-otel.version>
         <lombok.version>1.18.2</lombok.version>
         <jnc.version>1.0</jnc.version>
         <spring-kafka.version>2.2.7.RELEASE</spring-kafka.version>
@@ -112,6 +114,7 @@
         <junit-vintage-engine.version>5.3.1</junit-vintage-engine.version>
         <junit.version>4.12</junit.version>
         <spring.boot.version>2.1.6.RELEASE</spring.boot.version>
+        <spring-cloud.version>Greenwich.SR6</spring-cloud.version>
         <spring.kafka.version>2.2.7.RELEASE</spring.kafka.version>
         <before-after-spring-test-runner.version>0.1.0</before-after-spring-test-runner.version>
         <docker-compose-rule-junit4.version>0.34.0</docker-compose-rule-junit4.version>
@@ -123,6 +126,18 @@
         <skip-unit-tests>false</skip-unit-tests>
 
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
 
@@ -153,6 +168,14 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-client</artifactId>
             <version>${spring-cloud-config-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-sleuth-zipkin</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -390,7 +413,7 @@
                             <images>
                                 <image>
                                     <alias>${project.artifactId}</alias>
-                                    <name>${docker-image.namespace}/${docker-image.name.prefix}.${artifactId}</name>
+                                    <name>${docker-image.namespace}/${docker-image.name.prefix}.${project.artifactId}</name>
                                     <registry>${onap.nexus.dockerregistry.daily}</registry>
                                     <build>
                                         <dockerFileDir>${project.basedir}</dockerFileDir>
