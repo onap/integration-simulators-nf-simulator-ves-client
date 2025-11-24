@@ -32,7 +32,7 @@
 
     <groupId>org.onap.integration.simulators.nf-simulator.ves-client</groupId>
     <artifactId>vesclient</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
 
     <name>vesclient</name>
 
@@ -73,11 +73,7 @@
 
         <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
         <docker-maven-plugin-io-fabric.version>0.31.0</docker-maven-plugin-io-fabric.version>
-        <spring-boot-starter.version>2.1.6.RELEASE</spring-boot-starter.version>
-        <spring-boot-starter-web.version>2.1.6.RELEASE</spring-boot-starter-web.version>
-        <spring-boot-starter-websocket.version>2.1.6.RELEASE</spring-boot-starter-websocket.version>
-        <spring-boot-starter-actuator.version>2.1.0.RELEASE</spring-boot-starter-actuator.version>
-        <spring-boot-starter-data-mongodb.version>2.1.0.RELEASE</spring-boot-starter-data-mongodb.version>
+        <spring-boot.version>2.2.13.RELEASE</spring-boot.version>
         <spring-cloud-config-client.version>2.1.4.RELEASE</spring-cloud-config-client.version>
         <lombok.version>1.18.2</lombok.version>
         <jnc.version>1.0</jnc.version>
@@ -111,7 +107,7 @@
         <junit-jupiter-engine.version>5.3.1</junit-jupiter-engine.version>
         <junit-vintage-engine.version>5.3.1</junit-vintage-engine.version>
         <junit.version>4.12</junit.version>
-        <spring.boot.version>2.1.6.RELEASE</spring.boot.version>
+        <spring.boot.version>2.2.13.RELEASE</spring.boot.version>
         <spring.kafka.version>2.2.7.RELEASE</spring.kafka.version>
         <before-after-spring-test-runner.version>0.1.0</before-after-spring-test-runner.version>
         <docker-compose-rule-junit4.version>0.34.0</docker-compose-rule-junit4.version>
@@ -124,14 +120,22 @@
 
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-
-        <!--  Compile DEPENDENCIES  -->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>${spring-boot-starter.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
@@ -142,12 +146,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot-starter-web.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
-            <version>${spring-boot-starter-data-mongodb.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -228,11 +230,15 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <version>${spring.boot.version}</version>
         </dependency>
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
