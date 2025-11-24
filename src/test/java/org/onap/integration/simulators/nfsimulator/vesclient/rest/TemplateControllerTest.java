@@ -123,7 +123,7 @@ class TemplateControllerTest {
             .perform(get(LIST_URL)
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andReturn();
 
         Type listType = new TypeToken<ArrayList<Template>>() {}.getType();
@@ -139,7 +139,7 @@ class TemplateControllerTest {
         MvcResult getResult = mockMvc
             .perform(get(LIST_URL))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andReturn();
 
         String templatesAsString = GSON_OBJ.toJson(templateList);
@@ -157,7 +157,7 @@ class TemplateControllerTest {
         MvcResult getResult = mockMvc
             .perform(get(requestUrl))
             .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andReturn();
 
         Template result = new Gson().fromJson(getResult.getResponse().getContentAsString(), Template.class);
@@ -187,9 +187,9 @@ class TemplateControllerTest {
         SearchExp expr = new SearchExp(new JsonObject());
 
         String responseContent = mockMvc
-                .perform(post(SEARCH_ENDPOINT).content(GSON_OBJ.toJson(expr)).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .perform(post(SEARCH_ENDPOINT).content(GSON_OBJ.toJson(expr)).contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andReturn().getResponse().getContentAsString();
 
         List<String> actualTemplates = OBJECT_MAPPER.readValue(responseContent, new TypeReference<List<String>>() {});
@@ -204,7 +204,7 @@ class TemplateControllerTest {
 
         mockMvc.perform(post(SEARCH_ENDPOINT)
                 .content(GSON_OBJ.toJson(expr))
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isBadRequest());
     }
 
@@ -215,7 +215,7 @@ class TemplateControllerTest {
 
         MvcResult postResult = mockMvc
             .perform(post(UPLOAD_URL_NOFORCE)
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(TEMPLATE_REQUEST))
             .andExpect(status().isCreated())
             .andReturn();
@@ -227,7 +227,7 @@ class TemplateControllerTest {
 
         MvcResult postResult = mockMvc
             .perform(post(UPLOAD_URL_FORCE)
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(TEMPLATE_REQUEST))
             .andExpect(status().isCreated())
             .andReturn();
@@ -239,7 +239,7 @@ class TemplateControllerTest {
 
         MvcResult postResult = mockMvc
             .perform(post(UPLOAD_URL_FORCE)
-                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(TEMPLATE_REQUEST))
             .andExpect(status().isConflict())
             .andReturn();

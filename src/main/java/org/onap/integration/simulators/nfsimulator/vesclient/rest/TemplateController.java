@@ -35,7 +35,6 @@ import org.onap.integration.simulators.nfsimulator.vesclient.rest.model.Template
 import org.onap.integration.simulators.nfsimulator.vesclient.template.Template;
 import org.onap.integration.simulators.nfsimulator.vesclient.template.search.IllegalJsonValueException;
 import org.onap.integration.simulators.nfsimulator.vesclient.rest.model.SearchExp;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -58,7 +57,6 @@ public class TemplateController {
     static final String CANNOT_OVERRIDE_TEMPLATE_MSG = "Cannot overwrite existing template. Use override=true to override";
     private final Storage<Template> service;
 
-    @Autowired
     public TemplateController(Storage<Template> service) {
         this.service = service;
     }
@@ -86,7 +84,7 @@ public class TemplateController {
 
     private ResponseEntity<String> createTemplateResponse(Template template) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(new Gson().toJson(template),headers,  HttpStatus.OK);
     }
 
