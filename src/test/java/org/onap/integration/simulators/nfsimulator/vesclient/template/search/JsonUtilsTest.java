@@ -69,7 +69,7 @@ class JsonUtilsTest {
             + " \":event:notificationFields:arrayOfNamedHashMap[1]:name\" : \"A20161222.1042-1102.bin.gz\","
             + " \":event:notificationFields:arrayOfNamedHashMap[1]:hashMap:fileFormatType\" : \"org.3GPP.32.435#measCollec\","
             + " \":event:notificationFields:arrayOfNamedHashMap[1]:hashMap:fileFormatVersion\" : \"1.0.0\","
-            + " \":event:notificationFields:notificationFieldsVersion\" : \"2.0\" }";
+            + " \":event:notificationFields:notificationFieldsVersion\" : \"2.0\"}";
 
     @Test
     void shouldFlattenNestedJsonAndSeparateKeysWithDoubleHash() {
@@ -161,6 +161,6 @@ class JsonUtilsTest {
 
         Document result = utils.flatten(input);
 
-        assertThat(result.toJson()).isEqualTo("{ }");
+        assertThat(result.toJson()).isEqualTo("{}");
     }
 }
