@@ -161,6 +161,6 @@ class JsonUtilsTest {
 
         Document result = utils.flatten(input);
 
-        assertThat(result.toJson()).isEqualTo("{ }");
+        assertThat(result.toJson()).isEqualTo("{}");
     }
 }

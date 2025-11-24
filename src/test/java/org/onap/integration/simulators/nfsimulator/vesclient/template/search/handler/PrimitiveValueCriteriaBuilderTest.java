@@ -34,42 +34,42 @@ class PrimitiveValueCriteriaBuilderTest {
     void testShouldAddRegexLikeCriteriaForStringType() {
         Criteria criteria = builder.applyValueCriteriaBasedOnPrimitiveType(Criteria.where("k").is("10").and("v"), new JsonPrimitive("sample"));
 
-        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{ \"k\" : \"10\", \"v\" : { \"$regex\" : \"^\\\\Qsample\\\\E$\", \"$options\" : \"iu\" } }");
+        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{\"k\" : \"10\", \"v\" : {\"$regex\" : \"^\\\\Qsample\\\\E$\", \"$options\" : \"iu\" }}");
     }
 
     @Test
     void testShouldAddRegexLikeAndEscapeStringWithMetaChars() {
         Criteria criteria = builder.applyValueCriteriaBasedOnPrimitiveType(Criteria.where("k").is("10").and("v"), new JsonPrimitive("[1,2,3,4,5]"));
 
-        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{ \"k\" : \"10\", \"v\" : { \"$regex\" : \"^\\\\Q[1,2,3,4,5]\\\\E$\", \"$options\" : \"iu\" } }");
+        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{\"k\" : \"10\", \"v\" : { \"$regex\" : \"^\\\\Q[1,2,3,4,5]\\\\E$\", \"$options\" : \"iu\" }}");
     }
 
     @Test
     void testShouldAddRegexLikeCriteriaForIntType() {
         Criteria criteria = builder.applyValueCriteriaBasedOnPrimitiveType(Criteria.where("k").is("10").and("v"), new JsonPrimitive(1));
 
-        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{ \"k\" : \"10\", \"v\" : 1.0 }");
+        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{\"k\" : \"10\", \"v\" : 1.0 }");
     }
 
     @Test
     void testShouldAddRegexLikeCriteriaForLongType() {
         Criteria criteria = builder.applyValueCriteriaBasedOnPrimitiveType(Criteria.where("k").is("10").and("v"), new JsonPrimitive(Long.MAX_VALUE));
 
-        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{ \"k\" : \"10\", \"v\" : 9.223372036854776E18 }");
+        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{\"k\" : \"10\", \"v\" : 9.223372036854776E18 }");
     }
 
     @Test
     void testShouldAddRegexLikeCriteriaForDoubleType() {
         Criteria criteria = builder.applyValueCriteriaBasedOnPrimitiveType(Criteria.where("k").is("10").and("v"), new JsonPrimitive(2.5));
 
-        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{ \"k\" : \"10\", \"v\" : 2.5 }");
+        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{\"k\" : \"10\", \"v\" : 2.5 }");
     }
 
     @Test
     void testShouldAddRegexLikeCriteriaForBooleanType() {
         Criteria criteria = builder.applyValueCriteriaBasedOnPrimitiveType(Criteria.where("k").is("10").and("v"), new JsonPrimitive(true));
 
-        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{ \"k\" : \"10\", \"v\" : \"true\" }");
+        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{\"k\" : \"10\", \"v\" : \"true\" }");
     }
 
 }
