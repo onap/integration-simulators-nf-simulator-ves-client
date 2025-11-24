@@ -8,9 +8,9 @@
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
        http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,8 +22,9 @@
 <Configuration complete="true" compact="true">
 
     <Property name="outputFilename" value="pnfsimulator_output"/>
-    <Property name="log-path" value="/var/log/ONAP/pnfsimulator"/>
-    <Property name="archive" value="/var/log/ONAP/pnfsimulator/archive"/>
+    <Property name="log-dir" value="${env:LOG_DIR:-.}"/>
+    <Property name="log-path" value="${log-dir}/pnfsimulator"/>
+    <Property name="archive" value="${log-dir}/pnfsimulator/archive"/>
     <property name="maxFileSize" value="50MB"/>
     <property name="maxHistory" value="30"/>
     <property name="totalSizeCap" value="10GB"/>
