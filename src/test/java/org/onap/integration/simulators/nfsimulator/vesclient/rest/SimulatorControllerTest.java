@@ -179,7 +179,7 @@ class SimulatorControllerTest {
     void testShouldSendEventDirectly() throws Exception {
         String contentAsString = mockMvc
                 .perform(post(EVENT_ENDPOINT)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content("{\"vesServerUrl\":\"http://0.0.0.0:8080/simulator/v7\",\n"
                                 + "      \"event\":{  \n"
                                 + "         \"commonEventHeader\":{  \n"
@@ -200,7 +200,7 @@ class SimulatorControllerTest {
     void testShouldReplaceKeywordsAndSendEventDirectly() throws Exception {
         String contentAsString = mockMvc
                 .perform(post(EVENT_ENDPOINT)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content("{\"vesServerUrl\": \"http://localhost:9999/eventListener\",\n"
                                 + "    \"event\": {\n"
                                 + "        \"commonEventHeader\": {\n"
@@ -217,7 +217,7 @@ class SimulatorControllerTest {
     void shouldUseTestEndpointThenReceiveProperMessage() throws Exception {
         String contentAsString = mockMvc
                 .perform(post(TEST_ENDPOINT)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content("{\"simulatorParams\": {\n" +
                                 "        \"vesServerUrl\": \"http://localhost:9999/eventListener\"\n" +
                                 "    },\n" +
@@ -233,7 +233,7 @@ class SimulatorControllerTest {
 
         String contentAsString = mockMvc
                 .perform(post(CANCEL_JOB_ENDPOINT + JOB_NAME)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(""))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
@@ -246,7 +246,7 @@ class SimulatorControllerTest {
 
         String contentAsString = mockMvc
                 .perform(post(CANCEL_JOB_ENDPOINT + JOB_NAME)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(""))
                 .andExpect(status().isNotFound()).andReturn().getResponse().getContentAsString();
 
@@ -259,7 +259,7 @@ class SimulatorControllerTest {
 
         String contentAsString = mockMvc
                 .perform(post(CANCEL_JOB_ENDPOINT)
-                        .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(""))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
