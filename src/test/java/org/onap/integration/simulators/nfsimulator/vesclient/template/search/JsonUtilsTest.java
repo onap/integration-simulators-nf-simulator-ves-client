@@ -60,16 +60,16 @@ class JsonUtilsTest {
             + "      }],\n"
             + "      \"notificationFieldsVersion\": \"2.0\"\n}\n\n}}";
     private static final String EXPECTED_FLATTENED_NOTIFICATION = "{"
-            + " \":event:commonEventHeader:domain\" : \"notification\","
-            + " \":event:commonEventHeader:eventName\" : \"vFirewallBroadcastPackets\","
-            + " \":event:notificationFields:changeIdentifier\" : \"PM_MEAS_FILES\","
-            + " \":event:notificationFields:arrayOfNamedHashMap[0]:name\" : \"A20161221.1031-1041.bin.gz\","
-            + " \":event:notificationFields:arrayOfNamedHashMap[0]:hashMap:fileformatType\" : \"org.3GPP.32.435#measCollec\","
-            + " \":event:notificationFields:arrayOfNamedHashMap[0]:hashMap:fileFormatVersion\" : \"V10\","
-            + " \":event:notificationFields:arrayOfNamedHashMap[1]:name\" : \"A20161222.1042-1102.bin.gz\","
-            + " \":event:notificationFields:arrayOfNamedHashMap[1]:hashMap:fileFormatType\" : \"org.3GPP.32.435#measCollec\","
-            + " \":event:notificationFields:arrayOfNamedHashMap[1]:hashMap:fileFormatVersion\" : \"1.0.0\","
-            + " \":event:notificationFields:notificationFieldsVersion\" : \"2.0\" }";
+            + "\":event:commonEventHeader:domain\": \"notification\","
+            + " \":event:commonEventHeader:eventName\": \"vFirewallBroadcastPackets\","
+            + " \":event:notificationFields:changeIdentifier\": \"PM_MEAS_FILES\","
+            + " \":event:notificationFields:arrayOfNamedHashMap[0]:name\": \"A20161221.1031-1041.bin.gz\","
+            + " \":event:notificationFields:arrayOfNamedHashMap[0]:hashMap:fileformatType\": \"org.3GPP.32.435#measCollec\","
+            + " \":event:notificationFields:arrayOfNamedHashMap[0]:hashMap:fileFormatVersion\": \"V10\","
+            + " \":event:notificationFields:arrayOfNamedHashMap[1]:name\": \"A20161222.1042-1102.bin.gz\","
+            + " \":event:notificationFields:arrayOfNamedHashMap[1]:hashMap:fileFormatType\": \"org.3GPP.32.435#measCollec\","
+            + " \":event:notificationFields:arrayOfNamedHashMap[1]:hashMap:fileFormatVersion\": \"1.0.0\","
+            + " \":event:notificationFields:notificationFieldsVersion\": \"2.0\"}";
 
     @Test
     void shouldFlattenNestedJsonAndSeparateKeysWithDoubleHash() {
@@ -161,6 +161,6 @@ class JsonUtilsTest {
 
         Document result = utils.flatten(input);
 
-        assertThat(result.toJson()).isEqualTo("{ }");
+        assertThat(result.toJson()).isEqualTo("{}");
     }
 }
