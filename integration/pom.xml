@@ -29,13 +29,6 @@
     <version>1.0.0-SNAPSHOT</version>
     <name>vesclient-integration</name>
 
-    <repositories>
-        <repository>
-            <id>dl.bintray.com</id>
-            <url>https://dl.bintray.com/palantir/releases</url>
-        </repository>
-    </repositories>
-
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
