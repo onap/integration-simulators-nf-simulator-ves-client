@@ -62,6 +62,7 @@ public class DockerBasedTestsSuite {
         .file("../docker-compose.yml")
         .waitingForService("ves-client", HealthChecks.toHaveAllPortsOpen())
         .waitingForService("mongo", HealthChecks.toHaveAllPortsOpen())
+        .saveLogsTo("target/docker-logs")
         .build();
 
     @BeforeClass
