@@ -26,7 +26,6 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +37,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.function.Supplier;
 
 class HttpClientFactory {
     private static final int CONNECTION_TIMEOUT = 1000;
@@ -48,9 +48,15 @@ class HttpClientFactory {
             .build();
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpClientFactory.class);
     private final SSLContextFactory sslContextFactory;
+    private final Supplier<HttpClientBuilder> httpClientBuilderSupplier;
 
     HttpClientFactory(SSLContextFactory sslContextFactory) {
+        this(sslContextFactory, HttpClientBuilder::create);
+    }
+
+    HttpClientFactory(SSLContextFactory sslContextFactory, Supplier<HttpClientBuilder> httpClientBuilderSupplier) {
         this.sslContextFactory = sslContextFactory;
+        this.httpClientBuilderSupplier = httpClientBuilderSupplier;
     }
 
     HttpClient create(String url, SslAuthenticationHelper sslAuthenticationHelper) throws GeneralSecurityException, IOException {
@@ -84,8 +90,7 @@ class HttpClientFactory {
 
 
     private HttpClient createBasic() {
-        return HttpClientBuilder
-                .create()
+        return httpClientBuilderSupplier.get()
                 .setDefaultRequestConfig(CONFIG)
                 .build();
     }
@@ -95,7 +100,7 @@ class HttpClientFactory {
     }
 
     private HttpClient createSecured(SSLContext trustAlways, HostnameVerifier hostnameVerifier) {
-        return HttpClients.custom()
+        return httpClientBuilderSupplier.get()
                 .setSSLContext(trustAlways)
                 .setDefaultRequestConfig(CONFIG)
                 .setSSLHostnameVerifier(hostnameVerifier)

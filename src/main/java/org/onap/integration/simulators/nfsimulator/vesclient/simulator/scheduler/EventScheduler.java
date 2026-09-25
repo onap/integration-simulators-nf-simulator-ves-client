@@ -21,9 +21,10 @@ package org.onap.integration.simulators.nfsimulator.vesclient.simulator.schedule
 
 
 import com.google.gson.JsonObject;
+import brave.Tracing;
+import brave.propagation.TraceContext;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulator.KeywordsHandler;
-import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.HttpClientAdapterImpl;
-import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.utils.ssl.SslAuthenticationHelper;
+import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.HttpClientAdapterFactory;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -33,6 +34,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.TriggerBuilder;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -46,7 +48,9 @@ import static org.onap.integration.simulators.nfsimulator.vesclient.simulator.sc
 import static org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler.EventJob.CLIENT_ADAPTER;
 import static org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler.EventJob.EVENT_ID;
 import static org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler.EventJob.KEYWORDS_HANDLER;
+import static org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler.EventJob.PARENT_TRACE_CONTEXT;
 import static org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler.EventJob.TEMPLATE_NAME;
+import static org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler.EventJob.TRACER;
 import static org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler.EventJob.VES_URL;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
@@ -56,13 +60,16 @@ public class EventScheduler {
 
     private final Scheduler scheduler;
     private final KeywordsHandler keywordsHandler;
-    private final SslAuthenticationHelper sslAuthenticationHelper;
+    private final HttpClientAdapterFactory httpClientAdapterFactory;
+    private final ObjectProvider<Tracing> tracing;
 
     @Autowired
-    public EventScheduler(Scheduler scheduler, KeywordsHandler keywordsHandler, SslAuthenticationHelper sslAuthenticationHelper) {
+    public EventScheduler(Scheduler scheduler, KeywordsHandler keywordsHandler,
+                          HttpClientAdapterFactory httpClientAdapterFactory, ObjectProvider<Tracing> tracing) {
         this.scheduler = scheduler;
         this.keywordsHandler = keywordsHandler;
-        this.sslAuthenticationHelper = sslAuthenticationHelper;
+        this.httpClientAdapterFactory = httpClientAdapterFactory;
+        this.tracing = tracing;
     }
 
     public String scheduleEvent(String vesUrl, Integer repeatInterval, Integer repeatCount,
@@ -101,7 +108,15 @@ public class EventScheduler {
         jobDataMap.put(EVENT_ID, eventId);
         jobDataMap.put(KEYWORDS_HANDLER, keywordsHandler);
         jobDataMap.put(BODY, body);
-        jobDataMap.put(CLIENT_ADAPTER, new HttpClientAdapterImpl(vesUrl, sslAuthenticationHelper));
+        jobDataMap.put(CLIENT_ADAPTER, httpClientAdapterFactory.create(vesUrl));
+        Tracing currentTracing = tracing.getIfAvailable();
+        if (currentTracing != null) {
+            jobDataMap.put(TRACER, currentTracing.tracer());
+            TraceContext parentContext = currentTracing.currentTraceContext().get();
+            if (parentContext != null) {
+                jobDataMap.put(PARENT_TRACE_CONTEXT, parentContext);
+            }
+        }
 
         return JobBuilder
                 .newJob(EventJob.class)

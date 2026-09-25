@@ -21,10 +21,15 @@
 package org.onap.integration.simulators.nfsimulator.vesclient.integration;
 
 import com.google.gson.JsonObject;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 @Service
 public class VesSimulatorService {
+
+    void receiveHeaders(HttpHeaders headers) {
+        //JUST FOR TESTING PURPOSE
+    }
 
     void sendEventToDmaapV5(JsonObject jsonObject) {
         //JUST FOR TESTING PURPOSE

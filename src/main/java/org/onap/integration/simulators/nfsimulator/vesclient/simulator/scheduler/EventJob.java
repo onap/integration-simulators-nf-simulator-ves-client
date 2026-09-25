@@ -20,6 +20,9 @@
 
 package org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler;
 
+import brave.Span;
+import brave.Tracer;
+import brave.propagation.TraceContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulator.KeywordsHandler;
@@ -47,10 +50,32 @@ public class EventJob implements Job {
     static final String CLIENT_ADAPTER = "CLIENT_ADAPTER";
     static final String KEYWORDS_HANDLER = "KEYWORDS_HANDLER";
     static final String EVENT_ID = "EVENT_ID";
+    static final String TRACER = "TRACER";
+    static final String PARENT_TRACE_CONTEXT = "PARENT_TRACE_CONTEXT";
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
         JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
+        Tracer tracer = (Tracer) jobDataMap.get(TRACER);
+        if (tracer == null) {
+            sendEvent(jobExecutionContext, jobDataMap);
+            return;
+        }
+        TraceContext parentContext = (TraceContext) jobDataMap.get(PARENT_TRACE_CONTEXT);
+        Span span = (parentContext == null ? tracer.newTrace() : tracer.newChild(parentContext))
+            .name("send-event")
+            .start();
+        try (Tracer.SpanInScope ignored = tracer.withSpanInScope(span)) {
+            sendEvent(jobExecutionContext, jobDataMap);
+        } catch (RuntimeException e) {
+            span.error(e);
+            throw e;
+        } finally {
+            span.finish();
+        }
+    }
+
+    private void sendEvent(JobExecutionContext jobExecutionContext, JobDataMap jobDataMap) {
         String templateName = jobDataMap.getString(TEMPLATE_NAME);
         String vesUrl = jobDataMap.getString(VES_URL);
         JsonObject body = (JsonObject) jobDataMap.get(BODY);

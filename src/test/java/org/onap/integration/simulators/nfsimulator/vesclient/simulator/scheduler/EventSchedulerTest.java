@@ -21,10 +21,14 @@
 package org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import brave.Span;
+import brave.Tracer;
+import brave.Tracing;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
@@ -38,7 +42,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.utils.ssl.SslAuthenticationHelper;
+import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.HttpClientAdapterFactory;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
@@ -46,6 +50,7 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
+import org.springframework.beans.factory.ObjectProvider;
 
 class EventSchedulerTest {
 
@@ -56,7 +61,10 @@ class EventSchedulerTest {
     Scheduler quartzScheduler;
 
     @Mock
-    SslAuthenticationHelper sslAuthenticationHelper;
+    HttpClientAdapterFactory httpClientAdapterFactory;
+
+    @Mock
+    ObjectProvider<Tracing> tracingProvider;
 
     @BeforeEach
     void setUp() {
@@ -92,6 +100,44 @@ class EventSchedulerTest {
 
         //getRepeatInterval returns interval in ms
         assertThat(actualTrigger.getRepeatInterval()).isEqualTo(repeatInterval * 1000);
+    }
+
+    @Test
+    void shouldPassSchedulingTraceContextToJob() throws SchedulerException, IOException, GeneralSecurityException {
+        //given
+        ArgumentCaptor<JobDetail> jobDetailCaptor = ArgumentCaptor.forClass(JobDetail.class);
+        Tracing tracing = Tracing.newBuilder().build();
+        when(tracingProvider.getIfAvailable()).thenReturn(tracing);
+        Span schedulingSpan = tracing.tracer().newTrace().start();
+
+        //when
+        try (Tracer.SpanInScope ignored = tracing.tracer().withSpanInScope(schedulingSpan)) {
+            eventScheduler.scheduleEvent("http://some:80/", 1, 1, "testName", "1", new JsonObject());
+        } finally {
+            schedulingSpan.finish();
+            tracing.close();
+        }
+
+        //then
+        verify(quartzScheduler).scheduleJob(jobDetailCaptor.capture(), any(SimpleTrigger.class));
+        JobDataMap actualJobDataMap = jobDetailCaptor.getValue().getJobDataMap();
+        assertThat(actualJobDataMap.get(EventJob.TRACER)).isSameAs(tracing.tracer());
+        assertThat(actualJobDataMap.get(EventJob.PARENT_TRACE_CONTEXT)).isEqualTo(schedulingSpan.context());
+    }
+
+    @Test
+    void shouldNotPassTracerToJobWhenTracingIsDisabled() throws SchedulerException, IOException, GeneralSecurityException {
+        //given
+        ArgumentCaptor<JobDetail> jobDetailCaptor = ArgumentCaptor.forClass(JobDetail.class);
+
+        //when
+        eventScheduler.scheduleEvent("http://some:80/", 1, 1, "testName", "1", new JsonObject());
+
+        //then
+        verify(quartzScheduler).scheduleJob(jobDetailCaptor.capture(), any(SimpleTrigger.class));
+        JobDataMap actualJobDataMap = jobDetailCaptor.getValue().getJobDataMap();
+        assertThat(actualJobDataMap.containsKey(EventJob.TRACER)).isFalse();
+        assertThat(actualJobDataMap.containsKey(EventJob.PARENT_TRACE_CONTEXT)).isFalse();
     }
 
     @Test

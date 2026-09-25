@@ -33,6 +33,7 @@ import org.onap.integration.simulators.nfsimulator.vesclient.rest.model.FullEven
 import org.onap.integration.simulators.nfsimulator.vesclient.rest.model.SimulatorParams;
 import org.onap.integration.simulators.nfsimulator.vesclient.rest.model.SimulatorRequest;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.HttpClientAdapter;
+import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.HttpClientAdapterFactory;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.HttpResponseAdapter;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.utils.ssl.SslAuthenticationHelper;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler.EventScheduler;
@@ -42,6 +43,7 @@ import org.onap.integration.simulators.nfsimulator.vesclient.event.EventData;
 import org.onap.integration.simulators.nfsimulator.vesclient.event.EventDataService;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.HttpTestUtils;
 import org.quartz.SchedulerException;
+import org.springframework.beans.factory.ObjectProvider;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -119,7 +121,7 @@ class SimulatorServiceTest {
 
         simulatorService = new SimulatorService(templatePatcher, templateReader,
             eventScheduler, eventDataService, simulatorConfigService,
-            new TemplateVariablesReplacer(),new SslAuthenticationHelper());
+            new TemplateVariablesReplacer(),createHttpClientAdapterFactory());
     }
 
     @Test
@@ -196,7 +198,7 @@ class SimulatorServiceTest {
             templatePatcher, templateReader, eventScheduler,
             eventDataService, simulatorConfigService,
             new TemplateVariablesReplacer(),
-            new SslAuthenticationHelper()));
+            createHttpClientAdapterFactory()));
 
         HttpClientAdapter adapterMock = mock(HttpClientAdapter.class);
         prepareMocksWithAcceptedResponse(spiedTestedService, adapterMock);
@@ -215,7 +217,7 @@ class SimulatorServiceTest {
             templatePatcher, templateReader, eventScheduler,
             eventDataService, simulatorConfigService,
             new TemplateVariablesReplacer(),
-            new SslAuthenticationHelper())
+            createHttpClientAdapterFactory())
         );
 
         HttpClientAdapter adapterMock = mock(HttpClientAdapter.class);
@@ -306,4 +308,9 @@ class SimulatorServiceTest {
         assertThat(reportingEntityName).isEqualTo("TestDN-1");
     }
 
+
+    @SuppressWarnings("unchecked")
+    private static HttpClientAdapterFactory createHttpClientAdapterFactory() {
+        return new HttpClientAdapterFactory(new SslAuthenticationHelper(), mock(ObjectProvider.class));
+    }
 }

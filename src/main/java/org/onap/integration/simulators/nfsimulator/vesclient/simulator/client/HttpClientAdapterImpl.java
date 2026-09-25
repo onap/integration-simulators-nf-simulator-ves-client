@@ -20,6 +20,7 @@
 
 package org.onap.integration.simulators.nfsimulator.vesclient.simulator.client;
 
+import brave.http.HttpTracing;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -60,6 +61,12 @@ public class HttpClientAdapterImpl implements HttpClientAdapter {
     public HttpClientAdapterImpl(String targetUrl, SslAuthenticationHelper sslAuthenticationHelper)
         throws IOException, GeneralSecurityException {
         this.client = HttpClientFactoryFacade.create(targetUrl, sslAuthenticationHelper);
+        this.targetUrl = targetUrl;
+    }
+
+    public HttpClientAdapterImpl(String targetUrl, SslAuthenticationHelper sslAuthenticationHelper, HttpTracing httpTracing)
+        throws IOException, GeneralSecurityException {
+        this.client = HttpClientFactoryFacade.create(targetUrl, sslAuthenticationHelper, httpTracing);
         this.targetUrl = targetUrl;
     }
 

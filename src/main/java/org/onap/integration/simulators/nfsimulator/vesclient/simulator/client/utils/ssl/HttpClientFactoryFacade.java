@@ -20,6 +20,8 @@
 
 package org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.utils.ssl;
 
+import brave.http.HttpTracing;
+import brave.httpclient.TracingHttpClientBuilder;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import org.apache.http.client.HttpClient;
@@ -36,5 +38,11 @@ public class HttpClientFactoryFacade {
 
     public static HttpClient create(String url, SslAuthenticationHelper sslAuthenticationHelper) throws GeneralSecurityException, IOException {
         return HTTP_CLIENT_FACTORY.create(url, sslAuthenticationHelper);
+    }
+
+    public static HttpClient create(String url, SslAuthenticationHelper sslAuthenticationHelper, HttpTracing httpTracing)
+        throws GeneralSecurityException, IOException {
+        return new HttpClientFactory(SSL_CONTEXT_FACTORY, () -> TracingHttpClientBuilder.create(httpTracing))
+            .create(url, sslAuthenticationHelper);
     }
 }

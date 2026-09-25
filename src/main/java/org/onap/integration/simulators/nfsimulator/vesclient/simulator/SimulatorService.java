@@ -25,12 +25,11 @@ import com.google.gson.JsonObject;
 import org.onap.integration.simulators.nfsimulator.vesclient.rest.model.FullEvent;
 import org.onap.integration.simulators.nfsimulator.vesclient.rest.model.SimulatorParams;
 import org.onap.integration.simulators.nfsimulator.vesclient.rest.model.SimulatorRequest;
-import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.HttpClientAdapterImpl;
 import org.onap.integration.simulators.nfsimulator.vesclient.event.EventData;
 import org.onap.integration.simulators.nfsimulator.vesclient.event.EventDataService;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.HttpClientAdapter;
+import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.HttpClientAdapterFactory;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.HttpResponseAdapter;
-import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.utils.ssl.SslAuthenticationHelper;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler.EventScheduler;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulatorconfig.SimulatorConfig;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulatorconfig.SimulatorConfigService;
@@ -50,7 +49,7 @@ public class SimulatorService {
     private final TemplateReader templateReader;
     private final EventDataService eventDataService;
     private final EventScheduler eventScheduler;
-    private final SslAuthenticationHelper sslAuthenticationHelper;
+    private final HttpClientAdapterFactory httpClientAdapterFactory;
     private SimulatorConfigService simulatorConfigService;
     private static final JsonObject EMPTY_JSON_OBJECT = new JsonObject();
 
@@ -62,14 +61,14 @@ public class SimulatorService {
         EventDataService eventDataService,
         SimulatorConfigService simulatorConfigService,
         TemplateVariablesReplacer templateVariablesReplacer,
-        SslAuthenticationHelper sslAuthenticationHelper) {
+        HttpClientAdapterFactory httpClientAdapterFactory) {
         this.templatePatcher = templatePatcher;
         this.templateReader = templateReader;
         this.eventDataService = eventDataService;
         this.eventScheduler = eventScheduler;
         this.simulatorConfigService = simulatorConfigService;
         this.templateVariablesReplacer = templateVariablesReplacer;
-        this.sslAuthenticationHelper = sslAuthenticationHelper;
+        this.httpClientAdapterFactory = httpClientAdapterFactory;
     }
 
     public String triggerEvent(SimulatorRequest simulatorRequest) throws IOException, SchedulerException, GeneralSecurityException {
@@ -122,7 +121,7 @@ public class SimulatorService {
 
     HttpClientAdapter createHttpClientAdapter(String vesServerUrl) throws IOException, GeneralSecurityException {
         String targetVesUrl = getDefaultUrlIfNotProvided(vesServerUrl);
-        return new HttpClientAdapterImpl(targetVesUrl, sslAuthenticationHelper);
+        return httpClientAdapterFactory.create(targetVesUrl);
     }
 
     private String getDefaultUrlIfNotProvided(String vesUrlSimulatorParam) {

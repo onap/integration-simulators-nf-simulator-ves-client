@@ -20,13 +20,20 @@
 
 package org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import brave.Tracing;
+import brave.propagation.TraceContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulator.KeywordsExtractor;
@@ -36,6 +43,7 @@ import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
+import zipkin2.Span;
 
 class EventJobTest {
 
@@ -61,6 +69,58 @@ class EventJobTest {
         //then
         verify(clientAdapter).send(bodyCaptor.capture());
         assertThat(bodyCaptor.getValue()).isEqualTo(body.toString());
+    }
+
+    @Test
+    void shouldSendEventInChildSpanOfSchedulingTrace() {
+        //given
+        List<Span> reportedSpans = new ArrayList<>();
+        Tracing tracing = Tracing.newBuilder().spanReporter(reportedSpans::add).build();
+        TraceContext schedulingContext = tracing.tracer().newTrace().context();
+        HttpClientAdapter clientAdapter = mock(HttpClientAdapter.class);
+        AtomicReference<TraceContext> sendContext = captureTraceContextOnSend(tracing, clientAdapter);
+        JobExecutionContext jobExecutionContext = createMockJobExecutionContext("template name", "1",
+            "http://someurl:80/", new JsonObject(), clientAdapter);
+        JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
+        jobDataMap.put(EventJob.TRACER, tracing.tracer());
+        jobDataMap.put(EventJob.PARENT_TRACE_CONTEXT, schedulingContext);
+
+        //when
+        new EventJob().execute(jobExecutionContext);
+        tracing.close();
+
+        //then
+        assertThat(sendContext.get().traceId()).isEqualTo(schedulingContext.traceId());
+        assertThat(sendContext.get().parentIdAsLong()).isEqualTo(schedulingContext.spanId());
+        assertThat(reportedSpans).extracting(Span::name).containsExactly("send-event");
+    }
+
+    @Test
+    void shouldSendEventInNewTraceWhenScheduledWithoutTrace() {
+        //given
+        Tracing tracing = Tracing.newBuilder().build();
+        HttpClientAdapter clientAdapter = mock(HttpClientAdapter.class);
+        AtomicReference<TraceContext> sendContext = captureTraceContextOnSend(tracing, clientAdapter);
+        JobExecutionContext jobExecutionContext = createMockJobExecutionContext("template name", "1",
+            "http://someurl:80/", new JsonObject(), clientAdapter);
+        jobExecutionContext.getJobDetail().getJobDataMap().put(EventJob.TRACER, tracing.tracer());
+
+        //when
+        new EventJob().execute(jobExecutionContext);
+        tracing.close();
+
+        //then
+        assertThat(sendContext.get()).isNotNull();
+        assertThat(sendContext.get().parentIdAsLong()).isZero();
+    }
+
+    private AtomicReference<TraceContext> captureTraceContextOnSend(Tracing tracing, HttpClientAdapter clientAdapter) {
+        AtomicReference<TraceContext> sendContext = new AtomicReference<>();
+        doAnswer(invocation -> {
+            sendContext.set(tracing.currentTraceContext().get());
+            return null;
+        }).when(clientAdapter).send(anyString());
+        return sendContext;
     }
 
     private JobExecutionContext createMockJobExecutionContext(String templateName, String eventId, String vesUrl,
