@@ -31,10 +31,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
@@ -143,5 +146,10 @@ public class SingleEventTest {
         Document sourceNameInMongoDB = TestUtils.findSourceNameInMongoDB();
         Assertions.assertThat(sourceNameInMongoDB.get(TestUtils.PATCHED))
             .isEqualTo("{\"commonEventHeader\":{\"sourceName\":\"HistoricalEvent\",\"version\":3}}");
+
+        ArgumentCaptor<HttpHeaders> headersCaptor = ArgumentCaptor.forClass(HttpHeaders.class);
+        Mockito.verify(vesSimulatorService, Mockito.atLeastOnce()).receiveHeaders(headersCaptor.capture());
+        Assertions.assertThat(headersCaptor.getAllValues()).extracting(headers -> headers.getFirst(HttpHeaders.AUTHORIZATION))
+            .contains("Basic " + Base64.getEncoder().encodeToString("user1:pass1".getBytes(StandardCharsets.UTF_8)));
     }
 }

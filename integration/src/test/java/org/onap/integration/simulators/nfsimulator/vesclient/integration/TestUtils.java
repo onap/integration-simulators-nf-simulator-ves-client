@@ -48,6 +48,10 @@ public class TestUtils {
     }
 
     public static String getSourceName(JsonObject vesEvent) {
+        return getHeaderField(vesEvent, "sourceName");
+    }
+
+    public static String getHeaderField(JsonObject vesEvent, String fieldName) {
         JsonElement event = vesEvent.get("event");
         if (event == null || !event.isJsonObject()) {
             return null;
@@ -56,8 +60,8 @@ public class TestUtils {
         if (header == null || !header.isJsonObject()) {
             return null;
         }
-        JsonElement sourceName = header.getAsJsonObject().get("sourceName");
-        return sourceName == null || !sourceName.isJsonPrimitive() ? null : sourceName.getAsString();
+        JsonElement field = header.getAsJsonObject().get(fieldName);
+        return field == null || !field.isJsonPrimitive() ? null : field.getAsString();
     }
 
     public static String getCurrentIpAddress() throws SocketException {
