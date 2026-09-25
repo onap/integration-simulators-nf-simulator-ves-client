@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -78,7 +77,7 @@ class TemplateSearchHelperTest {
         String composedCriteriaInputJson = "{\"eventName\": \"pnfRegistration_Nokia_5gDu\", \"sequence\": 1}";
         JsonObject composedCriteriaObject = GSON.fromJson(composedCriteriaInputJson, JsonObject.class);
 
-        when(mongoTemplate.find(any(Query.class), anyObject(), any(String.class))).thenReturn(Lists.newArrayList(new FlatTemplateContent("sampleId1", null), new FlatTemplateContent("sampleId2", null)));
+        when(mongoTemplate.find(any(Query.class), any(), any(String.class))).thenReturn(Lists.newArrayList(new FlatTemplateContent("sampleId1", null), new FlatTemplateContent("sampleId2", null)));
 
         List<String> idsOfDocumentMatchingCriteria = helper.getIdsOfDocumentMatchingCriteria(composedCriteriaObject);
 

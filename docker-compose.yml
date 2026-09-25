@@ -1,7 +1,7 @@
 services:
 
   mongo:
-    # mongo-java-driver 3.11 used by ves-client cannot authenticate against mongo 8
+    # the integration suite's own mongo-java-driver 3.9 cannot authenticate against mongo 8
     image: mongo:4.4
     restart: always
     networks:
@@ -23,8 +23,7 @@ services:
     networks:
       - nf-simulator-network
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: zXcVbN123!
+      ME_CONFIG_MONGODB_URL: mongodb://root:zXcVbN123!@mongo:27017/
 
   ves-client:
     image: onap/org.onap.integration.nfsimulator.vesclient

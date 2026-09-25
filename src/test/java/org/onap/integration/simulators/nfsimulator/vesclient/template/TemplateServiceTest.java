@@ -42,7 +42,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -105,7 +104,7 @@ class TemplateServiceTest {
 
     @Test
     void testShouldReturnTemplatesAccordingToGivenSearchCriteria() {
-        doReturn(Lists.emptyList()).when(mongoTemplate).find(any(Query.class), anyObject(), any(String.class));
+        doReturn(Lists.emptyList()).when(mongoTemplate).find(any(Query.class), any(), any(String.class));
 
         List<String> idsByContentCriteria = service.getIdsByContentCriteria(GSON.fromJson("{\"domain\": \"notification.json\"}", JsonObject.class));
 
@@ -117,7 +116,7 @@ class TemplateServiceTest {
         JsonObject composedCriteriaObject = GSON.fromJson("{\"eventName\": \"pnfRegistration_Nokia_5gDu\", \"sequence\": 1}", JsonObject.class);
         List<FlatTemplateContent> arr = Lists.newArrayList(new FlatTemplateContent("sampleId", null));
 
-        doReturn(arr).when(mongoTemplate).find(any(Query.class), anyObject(), any(String.class));
+        doReturn(arr).when(mongoTemplate).find(any(Query.class), any(), any(String.class));
 
         List<String> idsByContentCriteria = service.getIdsByContentCriteria(composedCriteriaObject);
         assertThat(idsByContentCriteria).containsOnly("sampleId");

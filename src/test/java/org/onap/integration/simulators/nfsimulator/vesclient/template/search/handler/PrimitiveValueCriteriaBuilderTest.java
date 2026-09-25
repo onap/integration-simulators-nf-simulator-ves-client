@@ -34,14 +34,14 @@ class PrimitiveValueCriteriaBuilderTest {
     void testShouldAddRegexLikeCriteriaForStringType() {
         Criteria criteria = builder.applyValueCriteriaBasedOnPrimitiveType(Criteria.where("k").is("10").and("v"), new JsonPrimitive("sample"));
 
-        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{\"k\": \"10\", \"v\": {\"$regex\": \"^\\\\Qsample\\\\E$\", \"$options\": \"iu\"}}");
+        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{\"k\": \"10\", \"v\": {\"$regularExpression\": {\"pattern\": \"^\\\\Qsample\\\\E$\", \"options\": \"iu\"}}}");
     }
 
     @Test
     void testShouldAddRegexLikeAndEscapeStringWithMetaChars() {
         Criteria criteria = builder.applyValueCriteriaBasedOnPrimitiveType(Criteria.where("k").is("10").and("v"), new JsonPrimitive("[1,2,3,4,5]"));
 
-        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{\"k\": \"10\", \"v\": {\"$regex\": \"^\\\\Q[1,2,3,4,5]\\\\E$\", \"$options\": \"iu\"}}");
+        assertThat(criteria.getCriteriaObject().toJson()).isEqualTo("{\"k\": \"10\", \"v\": {\"$regularExpression\": {\"pattern\": \"^\\\\Q[1,2,3,4,5]\\\\E$\", \"options\": \"iu\"}}}");
     }
 
     @Test
