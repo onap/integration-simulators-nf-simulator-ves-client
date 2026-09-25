@@ -50,6 +50,7 @@
         <onap.nexus.url>http://nexus3.onap.org</onap.nexus.url>
         <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
         <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+        <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
         <git-commit-id-plugin.version>2.2.4</git-commit-id-plugin.version>
         <maven-surefire-plugin.version>2.19</maven-surefire-plugin.version>
         <junit-platform-surefire-provider.version>1.1.1</junit-platform-surefire-provider.version>
@@ -262,9 +263,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven-assembly-plugin.version}</version>
                 <configuration>
-                    <descriptor>src/assembly/resources.xml</descriptor>
-                    <finalName>${project.artifactId}-${project.version}</finalName>
+                    <descriptors>
+                        <descriptor>src/assembly/resources.xml</descriptor>
+                    </descriptors>
                 </configuration>
                 <executions>
                     <execution>
