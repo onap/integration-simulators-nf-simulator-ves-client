@@ -1,9 +1,8 @@
-version: '3.5'
-
 services:
 
   mongo:
-    image: mongo
+    # mongo-java-driver 3.11 used by ves-client cannot authenticate against mongo 8
+    image: mongo:4.4
     restart: always
     networks:
       - nf-simulator-network

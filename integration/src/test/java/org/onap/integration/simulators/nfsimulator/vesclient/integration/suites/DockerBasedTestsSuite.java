@@ -46,14 +46,15 @@ public class DockerBasedTestsSuite {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerBasedTestsSuite.class);
 
-    private static final String HEALTH_CHECK_ADDRESS = "http://0.0.0.0:5000/health";
-    private static final int RETRY_COUNT = 10;
+    // ves-client has no actuator; this endpoint answers only once templates are synchronized to mongo
+    private static final String HEALTH_CHECK_ADDRESS = "http://0.0.0.0:5000/template/list";
+    private static final int RETRY_COUNT = 60;
     private static final int RETRY_INTERVAL = 1000;
 
     @ClassRule
     public static DockerComposeRule docker = DockerComposeRule.builder()
         .file("../docker-compose.yml")
-        .waitingForService("pnf-simulator", HealthChecks.toHaveAllPortsOpen())
+        .waitingForService("ves-client", HealthChecks.toHaveAllPortsOpen())
         .waitingForService("mongo", HealthChecks.toHaveAllPortsOpen())
         .build();
 
@@ -68,9 +69,12 @@ public class DockerBasedTestsSuite {
             if (isHealthy) {
                 LOGGER.info("PNF is healthy");
             } else {
-                LOGGER.info("PNF no healthy retrying in  {}", RETRY_COUNT);
+                LOGGER.info("PNF no healthy retrying in {} ms", RETRY_INTERVAL);
                 Thread.sleep(RETRY_INTERVAL);
             }
+        }
+        if (!isHealthy) {
+            throw new IllegalStateException("ves-client did not become healthy after " + RETRY_COUNT + " tries");
         }
     }
 
