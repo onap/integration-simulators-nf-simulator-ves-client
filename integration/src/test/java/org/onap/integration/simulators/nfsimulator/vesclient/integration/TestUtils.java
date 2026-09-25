@@ -1,5 +1,7 @@
 package org.onap.integration.simulators.nfsimulator.vesclient.integration;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
@@ -43,6 +45,19 @@ public class TestUtils {
             dbObject = cursor.next();
         }
         return dbObject;
+    }
+
+    public static String getSourceName(JsonObject vesEvent) {
+        JsonElement event = vesEvent.get("event");
+        if (event == null || !event.isJsonObject()) {
+            return null;
+        }
+        JsonElement header = event.getAsJsonObject().get(COMMON_EVENT_HEADER);
+        if (header == null || !header.isJsonObject()) {
+            return null;
+        }
+        JsonElement sourceName = header.getAsJsonObject().get("sourceName");
+        return sourceName == null || !sourceName.isJsonPrimitive() ? null : sourceName.getAsString();
     }
 
     public static String getCurrentIpAddress() throws SocketException {

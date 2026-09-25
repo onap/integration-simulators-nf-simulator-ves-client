@@ -28,21 +28,22 @@ import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.Ht
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.TriggerBuilder;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import static org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler.EventJob.BODY;
 import static org.onap.integration.simulators.nfsimulator.vesclient.simulator.scheduler.EventJob.CLIENT_ADAPTER;
@@ -84,13 +85,13 @@ public class EventScheduler {
     }
 
     public boolean cancelAllEvents() throws SchedulerException {
-        List<JobKey> jobKeys = getActiveJobsKeys();
+        List<JobKey> jobKeys = new ArrayList<>(getScheduledJobsKeys());
         return scheduler.deleteJobs(jobKeys);
     }
 
     public boolean cancelEvent(String jobName) throws SchedulerException {
-        Optional<JobKey> activeJobKey = getActiveJobsKeys().stream().filter(e -> e.getName().equals(jobName)).findFirst();
-        return activeJobKey.isPresent() && scheduler.deleteJob(activeJobKey.get());
+        Optional<JobKey> scheduledJobKey = getScheduledJobsKeys().stream().filter(e -> e.getName().equals(jobName)).findFirst();
+        return scheduledJobKey.isPresent() && scheduler.deleteJob(scheduledJobKey.get());
     }
 
     private SimpleTrigger createTrigger(int interval, int repeatCount) {
@@ -125,11 +126,7 @@ public class EventScheduler {
                 .build();
     }
 
-    private List<JobKey> getActiveJobsKeys() throws SchedulerException {
-        return scheduler.getCurrentlyExecutingJobs()
-                .stream()
-                .map(JobExecutionContext::getJobDetail)
-                .map(JobDetail::getKey)
-                .collect(Collectors.toList());
+    private Set<JobKey> getScheduledJobsKeys() throws SchedulerException {
+        return scheduler.getJobKeys(GroupMatcher.anyJobGroup());
     }
 }

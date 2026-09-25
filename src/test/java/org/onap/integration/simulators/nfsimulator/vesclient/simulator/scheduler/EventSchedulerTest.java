@@ -22,7 +22,7 @@ package org.onap.integration.simulators.nfsimulator.vesclient.simulator.schedule
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,7 +35,8 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -45,11 +46,11 @@ import org.mockito.MockitoAnnotations;
 import org.onap.integration.simulators.nfsimulator.vesclient.simulator.client.HttpClientAdapterFactory;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.ObjectProvider;
 
 class EventSchedulerTest {
@@ -141,13 +142,12 @@ class EventSchedulerTest {
     }
 
     @Test
-    void shouldCancelAllEvents() throws SchedulerException {
+    void shouldCancelAllScheduledEvents() throws SchedulerException {
         //given
-        List<JobKey> jobsKeys = Arrays.asList(new JobKey("jobName1"), new JobKey("jobName2"),
-            new JobKey("jobName3"), new JobKey("jobName4"));
-        List<JobExecutionContext> jobExecutionContexts = createExecutionContextWithKeys(jobsKeys);
-        when(quartzScheduler.getCurrentlyExecutingJobs()).thenReturn(jobExecutionContexts);
-        when(quartzScheduler.deleteJobs(jobsKeys)).thenReturn(true);
+        Set<JobKey> jobsKeys = new HashSet<>(Arrays.asList(new JobKey("jobName1"), new JobKey("jobName2"),
+            new JobKey("jobName3"), new JobKey("jobName4")));
+        when(quartzScheduler.getJobKeys(GroupMatcher.anyJobGroup())).thenReturn(jobsKeys);
+        when(quartzScheduler.deleteJobs(new ArrayList<>(jobsKeys))).thenReturn(true);
 
         //when
         boolean isCancelled = eventScheduler.cancelAllEvents();
@@ -157,14 +157,12 @@ class EventSchedulerTest {
     }
 
     @Test
-    void shouldCancelSingleEvent() throws SchedulerException {
+    void shouldCancelSingleScheduledEvent() throws SchedulerException {
         //given
         JobKey jobToRemove = new JobKey("jobName3");
-        List<JobKey> jobsKeys = Arrays.asList(new JobKey("jobName1"), new JobKey("jobName2"),
-            jobToRemove, new JobKey("jobName4"));
-        List<JobExecutionContext> jobExecutionContexts = createExecutionContextWithKeys(jobsKeys);
-
-        when(quartzScheduler.getCurrentlyExecutingJobs()).thenReturn(jobExecutionContexts);
+        Set<JobKey> jobsKeys = new HashSet<>(Arrays.asList(new JobKey("jobName1"), new JobKey("jobName2"),
+            jobToRemove, new JobKey("jobName4")));
+        when(quartzScheduler.getJobKeys(GroupMatcher.anyJobGroup())).thenReturn(jobsKeys);
         when(quartzScheduler.deleteJob(jobToRemove)).thenReturn(true);
 
         //when
@@ -174,21 +172,17 @@ class EventSchedulerTest {
         assertThat(isCancelled).isTrue();
     }
 
-    private List<JobExecutionContext> createExecutionContextWithKeys(List<JobKey> jobsKeys) {
-        List<JobExecutionContext> contexts = new ArrayList<>();
-        for (JobKey key : jobsKeys) {
-            contexts.add(createExecutionContextFromKey(key));
-        }
-        return contexts;
+    @Test
+    void shouldNotCancelUnknownEvent() throws SchedulerException {
+        //given
+        when(quartzScheduler.getJobKeys(GroupMatcher.anyJobGroup()))
+            .thenReturn(new HashSet<>(Arrays.asList(new JobKey("jobName1"))));
+
+        //when
+        boolean isCancelled = eventScheduler.cancelEvent("unknownJob");
+
+        //then
+        assertThat(isCancelled).isFalse();
+        verify(quartzScheduler, never()).deleteJob(any(JobKey.class));
     }
-
-    private JobExecutionContext createExecutionContextFromKey(JobKey key) {
-        JobExecutionContext context = mock(JobExecutionContext.class);
-        JobDetail jobDetail = mock(JobDetail.class);
-        when(context.getJobDetail()).thenReturn(jobDetail);
-        when(jobDetail.getKey()).thenReturn(key);
-        return context;
-    }
-
-
 }

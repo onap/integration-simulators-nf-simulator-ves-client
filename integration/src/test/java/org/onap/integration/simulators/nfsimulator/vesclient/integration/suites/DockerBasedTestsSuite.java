@@ -29,6 +29,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.onap.integration.simulators.nfsimulator.vesclient.integration.OptionalTemplatesTest;
 import org.onap.integration.simulators.nfsimulator.vesclient.integration.BasicAvailabilityTest;
+import org.onap.integration.simulators.nfsimulator.vesclient.integration.CancelEventsTest;
 import org.onap.integration.simulators.nfsimulator.vesclient.integration.SearchInTemplatesTest;
 import org.onap.integration.simulators.nfsimulator.vesclient.integration.SingleEventTest;
 import org.onap.integration.simulators.nfsimulator.vesclient.integration.TemplatesManagementTest;
@@ -42,7 +43,8 @@ import static io.restassured.RestAssured.given;
 
 @RunWith(Suite.class)
 @SuiteClasses({BasicAvailabilityTest.class, TemplatesManagementTest.class, OptionalTemplatesTest.class,
-    SearchInTemplatesTest.class, VariablesReplacement.class, SingleEventTest.class, TracingTest.class})
+    SearchInTemplatesTest.class, VariablesReplacement.class, SingleEventTest.class, TracingTest.class,
+    CancelEventsTest.class})
 public class DockerBasedTestsSuite {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DockerBasedTestsSuite.class);
